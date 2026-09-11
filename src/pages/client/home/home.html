@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo - Foodstore</title>
+    <link rel="stylesheet" href="/src/styles/style.css">
+</head>
+
+<body data-role="client">
+
+    <header>
+        <h1>Foodstore</h1>
+        <p class="usuario-actual" id="usuario-actual"></p>
+        <nav>
+            <ul>
+                <li><a href="/src/pages/client/client.html">Inicio</a></li>
+                <li><a href="/src/pages/client/cart/cart.html">Ver carrito</a></li>
+                <li><a href="#" id="logout-link">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <hr>
+
+    <aside>
+        <h2>Categorías</h2>
+        <ul id="lista-categorias"></ul>
+    </aside>
+
+    <main>
+        <form id="form-busqueda">
+            <label for="buscar-producto">Buscar productos</label>
+            <input type="text" id="buscar-producto" name="buscar-producto" placeholder="Hamburguesa">
+        </form>
+
+        <section>
+            <h2>Catálogo de Productos</h2>
+            <p id="sin-resultados" class="mensaje-error" style="display: none;">
+                No se encontraron productos que coincidan con tu búsqueda.
+            </p>
+            <div id="contenedor-productos" class="grid"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Food Store. Todos los derechos reservados. Contacto: info@foodstore.com</p>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+    <script type="module" src="./home.ts"></script>
+</body>
+</html>

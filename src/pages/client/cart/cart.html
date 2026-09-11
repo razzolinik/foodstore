@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Carrito - Foodstore</title>
+    <link rel="stylesheet" href="/src/styles/style.css">
+</head>
+
+<body data-role="client">
+
+    <header>
+        <h1>Mi Carrito</h1>
+        <p class="usuario-actual" id="usuario-actual"></p>
+        <nav>
+            <ul>
+                <li><a href="/src/pages/client/home/home.html">Volver al catálogo</a></li>
+                <li><a href="#" id="logout-link">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <hr>
+
+    <main>
+        <section>
+            <h2>Productos en tu carrito</h2>
+            <p id="carrito-vacio" class="mensaje-error" style="display: none;">
+                Tu carrito está vacío.
+            </p>
+            <table id="tabla-carrito" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Precio</th>
+                        <th>Cantidad</th>
+                        <th>Subtotal</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpo-carrito"></tbody>
+            </table>
+            <h3 id="total-carrito"></h3>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Food Store. Todos los derechos reservados. Contacto: info@foodstore.com</p>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+    <script type="module" src="./cart.ts"></script>
+</body>
+</html>
