@@ -1,10 +1,16 @@
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito+Sans:wght@400;600;700&display=swap");
+
 :root {
-    --color-primario: #ff6347;
-    --color-fondo: #f0f0f0;
-    --color-texto: #333;
+    --color-primario: #f97316;
+    --color-fondo: #fff8f1;
+    --color-texto: #3b2317;
+    --color-suave: #7a6055;
     --color-blanco: #fff;
-    --color-borde: #ddd;
-    --color-focus: #ff4500;
+    --color-borde: #f2ddc8;
+    --color-focus: #c2410c;
+    --color-mostaza: #eab308;
+    --fuente-titulo: "Fredoka", "Trebuchet MS", sans-serif;
+    --fuente-texto: "Nunito Sans", system-ui, sans-serif;
 }
 
 * {
@@ -17,8 +23,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--color-fondo);
-    font-family: Arial, Helvetica, sans-serif;
+    background: radial-gradient(circle at 20% 20%, #ffedd5 0%, var(--color-fondo) 55%);
+    font-family: var(--fuente-texto);
     color: var(--color-texto);
 }
 
@@ -35,21 +41,26 @@ body {
     max-width: 380px;
     padding: 40px 32px;
     border: 1px solid var(--color-borde);
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-top: 5px solid var(--color-mostaza);
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(124, 45, 18, 0.16);
     text-align: center;
 }
 
 .login-form h1 {
-    color: var(--color-primario);
+    font-family: var(--fuente-titulo);
+    font-size: 2rem;
+    color: var(--color-focus);
     text-transform: uppercase;
     letter-spacing: 2px;
     margin-bottom: 4px;
 }
 
 .login-form h2 {
-    font-weight: normal;
-    color: var(--color-texto);
+    font-family: var(--fuente-titulo);
+    font-weight: 500;
+    font-size: 1.15rem;
+    color: var(--color-suave);
     margin-top: 0;
     margin-bottom: 24px;
     line-height: 1.4;
@@ -71,7 +82,8 @@ body {
     width: 100%;
     padding: 10px 12px;
     border: 1px solid var(--color-borde);
-    border-radius: 6px;
+    border-radius: 8px;
+    font-family: inherit;
     font-size: 14px;
     color: var(--color-texto);
 }
@@ -79,13 +91,16 @@ body {
 .campo input:focus {
     outline: none;
     border-color: var(--color-focus);
-    box-shadow: 0 0 0 2px rgba(255, 69, 0, 0.15);
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.18);
 }
 
 button[type="submit"] {
     width: 100%;
     padding: 12px;
-    background-color: var(--color-primario);
+    font-family: var(--fuente-texto);
+    font-weight: 700;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--color-primario) 0%, #ea580c 100%);
     color: var(--color-blanco);
     border: none;
     border-radius: 6px;
@@ -98,7 +113,7 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-    background-color: var(--color-focus);
+    background: linear-gradient(135deg, #ea580c 0%, var(--color-focus) 100%);
 }
 
 .registro {
@@ -113,4 +128,18 @@ button[type="submit"]:hover {
 
 .registro a:hover {
     color: var(--color-focus);
+}
+.mensaje-error {
+    color: #b91c1c;
+    font-weight: 600;
+    font-size: 14px;
+    min-height: 20px;
+    margin: 0 0 4px;
+}
+
+.mensaje-ok {
+    color: #15803d;
+    font-weight: 600;
+    font-size: 14px;
+    margin: 0 0 4px;
 }

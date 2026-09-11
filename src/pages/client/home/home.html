@@ -1,53 +1,79 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo - Foodstore</title>
+    <title>Catálogo - Food Store</title>
     <link rel="stylesheet" href="/src/styles/style.css">
 </head>
-
 <body data-role="client">
 
-    <header>
-        <h1>Foodstore</h1>
-        <p class="usuario-actual" id="usuario-actual"></p>
-        <nav>
-            <ul>
-                <li><a href="/src/pages/client/client.html">Inicio</a></li>
-                <li><a href="/src/pages/client/cart/cart.html">Ver carrito</a></li>
-                <li><a href="#" id="logout-link">Cerrar Sesión</a></li>
-            </ul>
-        </nav>
+    <header class="site-header">
+        <div class="header-inner">
+            <a class="brand" href="./home.html">🍔 Food<span>Store</span></a>
+
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="./home.html" class="activo">Catálogo</a></li>
+                    <li>
+                        <a href="../cart/cart.html">
+                            🛒 Carrito
+                            <span class="badge" id="contador-carrito">0</span>
+                        </a>
+                    </li>
+                    <li><a href="#" id="logout-link">Cerrar sesión</a></li>
+                </ul>
+            </nav>
+
+            <p class="usuario-actual" id="usuario-actual"></p>
+        </div>
     </header>
 
-    <hr>
+    <div class="layout">
+        <aside class="sidebar">
+            <h2>Categorías</h2>
+            <ul id="lista-categorias"></ul>
+        </aside>
 
-    <aside>
-        <h2>Categorías</h2>
-        <ul id="lista-categorias"></ul>
-    </aside>
+        <main>
+            <form class="buscador" id="form-busqueda" role="search">
+                <label for="buscar-producto">Buscar productos</label>
+                <div class="buscador-campo">
+                    <span class="lupa" aria-hidden="true">🔍</span>
+                    <input type="search" id="buscar-producto" name="buscar-producto"
+                        placeholder="Buscá por nombre: hamburguesa, pizza, papas..." autocomplete="off">
+                    <button type="button" class="btn-limpiar" id="limpiar-busqueda" title="Limpiar búsqueda"
+                        aria-label="Limpiar búsqueda">✕</button>
+                </div>
+            </form>
 
-    <main>
-        <form id="form-busqueda">
-            <label for="buscar-producto">Buscar productos</label>
-            <input type="text" id="buscar-producto" name="buscar-producto" placeholder="Hamburguesa">
-        </form>
+            <section>
+                <h2 class="titulo-seccion" id="titulo-catalogo">Catálogo de productos</h2>
+                <p class="contador-resultados" id="contador-resultados"></p>
+                <div class="estado-vacio" id="sin-resultados" hidden>
+                    <span class="icono" aria-hidden="true">🍽️</span>
+                    <h3>No encontramos nada</h3>
+                    <p id="texto-sin-resultados">No hay productos que coincidan con tu búsqueda.</p>
+                    <button type="button" class="btn-secundario" id="ver-todo">Ver todo el catálogo</button>
+                </div>
 
-        <section>
-            <h2>Catálogo de Productos</h2>
-            <p id="sin-resultados" class="mensaje-error" style="display: none;">
-                No se encontraron productos que coincidan con tu búsqueda.
-            </p>
-            <div id="contenedor-productos" class="grid"></div>
-        </section>
-    </main>
+                <div id="contenedor-productos" class="grid"></div>
+            </section>
+        </main>
+    </div>
 
-    <footer>
-        <p>&copy; 2026 Food Store. Todos los derechos reservados. Contacto: info@foodstore.com</p>
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <p class="footer-marca">🍔 Food Store</p>
+            <p>&copy; 2026 Food Store. Todos los derechos reservados.</p>
+            <p>Contacto: <a href="mailto:info@foodstore.com">info@foodstore.com</a></p>
+        </div>
     </footer>
+    <div class="contenedor-toast" id="contenedor-toast" aria-live="polite"></div>
 
     <script type="module" src="/src/main.ts"></script>
     <script type="module" src="./home.ts"></script>
 </body>
+
 </html>

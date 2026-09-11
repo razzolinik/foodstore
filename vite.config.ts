@@ -1,7 +1,6 @@
 import { defineConfig } from "vite";
 import { resolve } from "node:path";
 
-
 export default defineConfig({
   build: {
     rollupOptions: {
@@ -10,11 +9,10 @@ export default defineConfig({
         login: resolve(__dirname, "src/pages/auth/login/login.html"),
         registro: resolve(__dirname, "src/pages/auth/registro/registro.html"),
         admin: resolve(__dirname, "src/pages/admin/admin.html"),
-        client: resolve(__dirname, "src/pages/client/client.html"),
-        // parcial - Evaluación 1:
         clientHome: resolve(__dirname, "src/pages/client/home/home.html"),
         clientCart: resolve(__dirname, "src/pages/client/cart/cart.html"),
       },
     },
   },
+  base: "./",
 });

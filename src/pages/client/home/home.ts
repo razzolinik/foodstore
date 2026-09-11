@@ -2,92 +2,160 @@ import { PRODUCTS, getCategories } from "../../../data/data";
 import { agregarAlCarrito } from "../../../utils/cart";
 import { obtenerSesion } from "../../../utils/storage";
 import { cerrarSesion } from "../../../utils/auth";
+import { mostrarToast, actualizarContadorCarrito, formatearPrecio } from "../../../utils/ui";
 import { IProducto } from "../../../types/IProduct";
 
 const listaCategorias = document.getElementById("lista-categorias") as HTMLUListElement;
 const contenedorProductos = document.getElementById("contenedor-productos") as HTMLDivElement;
-const sinResultados = document.getElementById("sin-resultados") as HTMLParagraphElement;
+const sinResultados = document.getElementById("sin-resultados") as HTMLDivElement;
+const textoSinResultados = document.getElementById("texto-sin-resultados") as HTMLParagraphElement;
+const contadorResultados = document.getElementById("contador-resultados") as HTMLParagraphElement;
+const tituloCatalogo = document.getElementById("titulo-catalogo") as HTMLHeadingElement;
 const inputBusqueda = document.getElementById("buscar-producto") as HTMLInputElement;
 const formBusqueda = document.getElementById("form-busqueda") as HTMLFormElement;
+const botonLimpiar = document.getElementById("limpiar-busqueda") as HTMLButtonElement;
+const botonVerTodo = document.getElementById("ver-todo") as HTMLButtonElement;
 const usuarioActual = document.getElementById("usuario-actual") as HTMLParagraphElement;
 const logoutLink = document.getElementById("logout-link") as HTMLAnchorElement;
-
 
 let textoBusqueda = "";
 let categoriaSeleccionada: string | null = null;
 
+const escapar = (texto: string): string =>
+  texto.replace(/[&<>"']/g, (caracter) => {
+    const mapa: Record<string, string> = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    };
+    return mapa[caracter] ?? caracter;
+  });
 
 const cargarCategorias = (): void => {
   const categorias = getCategories();
 
   listaCategorias.innerHTML = `
-    <li><a href="#" data-categoria="">Todas</a></li>
+    <li><a href="#" data-categoria="">Todas las categorías</a></li>
     ${categorias
-      .map((cat) => `<li><a href="#" data-categoria="${cat.nombre}">${cat.nombre}</a></li>`)
+      .map(
+        (cat) =>
+          `<li><a href="#" data-categoria="${escapar(cat.nombre)}">${escapar(cat.nombre)}</a></li>`
+      )
       .join("")}
   `;
 
-  listaCategorias.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", (evento) => {
+  listaCategorias.querySelectorAll<HTMLAnchorElement>("a").forEach((link) => {
+    link.addEventListener("click", (evento: MouseEvent) => {
       evento.preventDefault();
-      const categoria = (evento.target as HTMLAnchorElement).dataset.categoria;
-      categoriaSeleccionada = categoria ? categoria : null;
+      const categoria = link.dataset.categoria ?? "";
+      categoriaSeleccionada = categoria === "" ? null : categoria;
+      marcarCategoriaActiva();
       renderizarProductos();
     });
   });
+
+  marcarCategoriaActiva();
 };
 
+const marcarCategoriaActiva = (): void => {
+  listaCategorias.querySelectorAll<HTMLAnchorElement>("a").forEach((link) => {
+    const esActiva = (link.dataset.categoria ?? "") === (categoriaSeleccionada ?? "");
+    link.classList.toggle("activo", esActiva);
+  });
+};
 
 const obtenerProductosFiltrados = (): IProducto[] => {
+  const busqueda = textoBusqueda.trim().toLowerCase();
+
   return PRODUCTS.filter((producto) => {
-    const coincideNombre = producto.nombre
-      .toLowerCase()
-      .includes(textoBusqueda.toLowerCase());
+    const coincideNombre = producto.nombre.toLowerCase().includes(busqueda);
     const coincideCategoria =
-      !categoriaSeleccionada || producto.categoria === categoriaSeleccionada;
+      categoriaSeleccionada === null || producto.categoria === categoriaSeleccionada;
     return coincideNombre && coincideCategoria;
   });
 };
 
+const crearTarjeta = (producto: IProducto): HTMLElement => {
+  const card = document.createElement("article");
+  card.classList.add("product-card");
+
+  card.innerHTML = `
+    <img src="${producto.imagen}" alt="${escapar(producto.nombre)}" loading="lazy">
+    <div class="card-body">
+      <span class="etiqueta-categoria">${escapar(producto.categoria)}</span>
+      <h3>${escapar(producto.nombre)}</h3>
+      <p class="descripcion">${escapar(producto.descripcion)}</p>
+      <p class="price">${formatearPrecio(producto.precio)}</p>
+      <button type="button" class="btn-primario">🛒 Agregar al carrito</button>
+    </div>
+  `;
+
+  const botonAgregar = card.querySelector("button") as HTMLButtonElement;
+
+  botonAgregar.addEventListener("click", () => {
+    agregarAlCarrito(producto, 1);
+    actualizarContadorCarrito(true);
+    mostrarToast(`${producto.nombre} se agregó al carrito`);
+  });
+
+  return card;
+};
 
 const renderizarProductos = (): void => {
   const productos = obtenerProductosFiltrados();
+
+  tituloCatalogo.textContent =
+    categoriaSeleccionada === null ? "Catálogo de productos" : categoriaSeleccionada;
+
   contenedorProductos.innerHTML = "";
-  sinResultados.style.display = productos.length === 0 ? "block" : "none";
+  productos.forEach((producto) => contenedorProductos.appendChild(crearTarjeta(producto)));
 
-  productos.forEach((producto) => {
-    const card = document.createElement("article");
-    card.classList.add("product-card");
+  const hayResultados = productos.length > 0;
+  sinResultados.hidden = hayResultados;
+  contenedorProductos.hidden = !hayResultados;
 
-    card.innerHTML = `
-      <img src="${producto.imagen}" alt="${producto.nombre}">
-      <h3>${producto.nombre}</h3>
-      <p>${producto.descripcion}</p>
-      <p class="price">$${producto.precio.toFixed(2)}</p>
-      <button type="button">Agregar al carrito</button>
-      <span class="mensaje-ok" style="display: none;">Agregado ✓</span>
-    `;
-
-    const botonAgregar = card.querySelector("button") as HTMLButtonElement;
-    const mensajeOk = card.querySelector(".mensaje-ok") as HTMLSpanElement;
-
-    botonAgregar.addEventListener("click", () => {
-      agregarAlCarrito(producto, 1);
-      mensajeOk.style.display = "inline";
-      setTimeout(() => {
-        mensajeOk.style.display = "none";
-      }, 1200);
-    });
-
-    contenedorProductos.appendChild(card);
-  });
+  if (hayResultados) {
+    contadorResultados.textContent =
+      productos.length === 1 ? "1 producto encontrado" : `${productos.length} productos encontrados`;
+  } else {
+    contadorResultados.textContent = "";
+    const busqueda = textoBusqueda.trim();
+    textoSinResultados.textContent = busqueda
+      ? `No hay productos que coincidan con "${busqueda}"${
+          categoriaSeleccionada ? ` en ${categoriaSeleccionada}` : ""
+        }.`
+      : "No hay productos en esta categoría.";
+  }
 };
 
-formBusqueda.addEventListener("submit", (evento) => evento.preventDefault());
+const reiniciarFiltros = (): void => {
+  textoBusqueda = "";
+  categoriaSeleccionada = null;
+  inputBusqueda.value = "";
+  botonLimpiar.classList.remove("visible");
+  marcarCategoriaActiva();
+  renderizarProductos();
+};
+
+formBusqueda.addEventListener("submit", (evento: SubmitEvent) => evento.preventDefault());
+
 inputBusqueda.addEventListener("input", () => {
   textoBusqueda = inputBusqueda.value;
+  botonLimpiar.classList.toggle("visible", textoBusqueda.length > 0);
   renderizarProductos();
 });
+
+botonLimpiar.addEventListener("click", () => {
+  textoBusqueda = "";
+  inputBusqueda.value = "";
+  botonLimpiar.classList.remove("visible");
+  inputBusqueda.focus();
+  renderizarProductos();
+});
+
+botonVerTodo.addEventListener("click", reiniciarFiltros);
 
 logoutLink.addEventListener("click", (evento: MouseEvent) => {
   evento.preventDefault();
@@ -95,7 +163,8 @@ logoutLink.addEventListener("click", (evento: MouseEvent) => {
 });
 
 const sesion = obtenerSesion();
-if (sesion) usuarioActual.textContent = `Sesión: ${sesion.email}`;
+if (sesion) usuarioActual.textContent = `Sesión iniciada como ${sesion.email}`;
 
 cargarCategorias();
 renderizarProductos();
+actualizarContadorCarrito();

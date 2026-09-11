@@ -3,64 +3,120 @@ import {
   actualizarCantidad,
   eliminarDelCarrito,
   calcularTotal,
+  contarItems,
+  vaciarCarrito,
 } from "../../../utils/cart";
 import { obtenerSesion } from "../../../utils/storage";
 import { cerrarSesion } from "../../../utils/auth";
+import { mostrarToast, actualizarContadorCarrito, formatearPrecio } from "../../../utils/ui";
 
-const carritoVacio = document.getElementById("carrito-vacio") as HTMLParagraphElement;
-const tablaCarrito = document.getElementById("tabla-carrito") as HTMLTableElement;
+const carritoVacio = document.getElementById("carrito-vacio") as HTMLDivElement;
+const panelCarrito = document.getElementById("panel-carrito") as HTMLDivElement;
 const cuerpoCarrito = document.getElementById("cuerpo-carrito") as HTMLTableSectionElement;
-const totalCarrito = document.getElementById("total-carrito") as HTMLHeadingElement;
+const resumenCarrito = document.getElementById("resumen-carrito") as HTMLElement;
+const resumenItems = document.getElementById("resumen-items") as HTMLSpanElement;
+const resumenSubtotal = document.getElementById("resumen-subtotal") as HTMLSpanElement;
+const totalCarrito = document.getElementById("total-carrito") as HTMLSpanElement;
+const botonVaciar = document.getElementById("vaciar-carrito") as HTMLButtonElement;
 const usuarioActual = document.getElementById("usuario-actual") as HTMLParagraphElement;
 const logoutLink = document.getElementById("logout-link") as HTMLAnchorElement;
 
-// Renders the cart table (or the empty-cart message) plus the running total.
+const escapar = (texto: string): string =>
+  texto.replace(/[&<>"']/g, (caracter) => {
+    const mapa: Record<string, string> = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    };
+    return mapa[caracter] ?? caracter;
+  });
+
 const renderizarCarrito = (): void => {
   const items = obtenerCarrito();
+  const hayItems = items.length > 0;
 
-  if (items.length === 0) {
-    carritoVacio.style.display = "block";
-    tablaCarrito.style.display = "none";
-    totalCarrito.textContent = "";
+  carritoVacio.hidden = hayItems;
+  panelCarrito.hidden = !hayItems;
+  resumenCarrito.hidden = !hayItems;
+
+  actualizarContadorCarrito();
+
+  if (!hayItems) {
+    cuerpoCarrito.innerHTML = "";
     return;
   }
-
-  carritoVacio.style.display = "none";
-  tablaCarrito.style.display = "table";
 
   cuerpoCarrito.innerHTML = items
     .map(
       (item) => `
-      <tr data-id="${item.producto.id}">
-        <td>${item.producto.nombre}</td>
-        <td>$${item.producto.precio.toFixed(2)}</td>
-        <td><input type="number" min="1" value="${item.cantidad}" class="input-cantidad" data-id="${item.producto.id}"></td>
-        <td>$${(item.producto.precio * item.cantidad).toFixed(2)}</td>
-        <td><a href="#" class="quitar" data-id="${item.producto.id}">Quitar</a></td>
+      <tr data-id="${escapar(item.producto.id)}">
+        <td>
+          <div class="celda-producto">
+            <img src="${item.producto.imagen}" alt="${escapar(item.producto.nombre)}">
+            <div>
+              <strong>${escapar(item.producto.nombre)}</strong>
+              <small>${escapar(item.producto.categoria)}</small>
+            </div>
+          </div>
+        </td>
+        <td>${formatearPrecio(item.producto.precio)}</td>
+        <td>
+          <div class="control-cantidad">
+            <button type="button" data-accion="restar" data-id="${escapar(item.producto.id)}"
+              aria-label="Quitar una unidad">−</button>
+            <span class="cantidad">${item.cantidad}</span>
+            <button type="button" data-accion="sumar" data-id="${escapar(item.producto.id)}"
+              aria-label="Agregar una unidad">+</button>
+          </div>
+        </td>
+        <td class="subtotal">${formatearPrecio(item.producto.precio * item.cantidad)}</td>
+        <td>
+          <button type="button" class="btn-quitar" data-accion="quitar"
+            data-id="${escapar(item.producto.id)}" aria-label="Quitar del carrito" title="Quitar">🗑</button>
+        </td>
       </tr>
     `
     )
     .join("");
 
-  totalCarrito.textContent = `Total: $${calcularTotal().toFixed(2)}`;
+  const unidades = contarItems();
+  const total = calcularTotal();
 
-  cuerpoCarrito.querySelectorAll(".input-cantidad").forEach((input) => {
-    input.addEventListener("change", (evento) => {
-      const target = evento.target as HTMLInputElement;
-      actualizarCantidad(target.dataset.id as string, Number(target.value));
-      renderizarCarrito();
-    });
-  });
-
-  cuerpoCarrito.querySelectorAll(".quitar").forEach((link) => {
-    link.addEventListener("click", (evento) => {
-      evento.preventDefault();
-      const id = (evento.target as HTMLAnchorElement).dataset.id as string;
-      eliminarDelCarrito(id);
-      renderizarCarrito();
-    });
-  });
+  resumenItems.textContent = unidades === 1 ? "1 producto" : `${unidades} productos`;
+  resumenSubtotal.textContent = formatearPrecio(total);
+  totalCarrito.textContent = formatearPrecio(total);
 };
+
+cuerpoCarrito.addEventListener("click", (evento: MouseEvent) => {
+  const boton = (evento.target as HTMLElement).closest("button");
+  if (!boton) return;
+
+  const id = boton.dataset.id;
+  const accion = boton.dataset.accion;
+  if (!id || !accion) return;
+
+  const item = obtenerCarrito().find((i) => i.producto.id === id);
+  if (!item) return;
+
+  if (accion === "sumar") {
+    actualizarCantidad(id, item.cantidad + 1);
+  } else if (accion === "restar") {
+    actualizarCantidad(id, item.cantidad - 1);
+  } else if (accion === "quitar") {
+    eliminarDelCarrito(id);
+    mostrarToast(`${item.producto.nombre} se quitó del carrito`, "info");
+  }
+
+  renderizarCarrito();
+});
+
+botonVaciar.addEventListener("click", () => {
+  vaciarCarrito();
+  renderizarCarrito();
+  mostrarToast("Vaciaste el carrito", "info");
+});
 
 logoutLink.addEventListener("click", (evento: MouseEvent) => {
   evento.preventDefault();
@@ -68,6 +124,6 @@ logoutLink.addEventListener("click", (evento: MouseEvent) => {
 });
 
 const sesion = obtenerSesion();
-if (sesion) usuarioActual.textContent = `Sesión: ${sesion.email}`;
+if (sesion) usuarioActual.textContent = `Sesión iniciada como ${sesion.email}`;
 
 renderizarCarrito();

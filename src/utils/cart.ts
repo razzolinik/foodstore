@@ -1,7 +1,6 @@
 import { IProducto } from "../types/IProduct";
 import { ICartItem } from "../types/ICartItem";
 
-
 const CLAVE_CARRITO = "cart";
 
 function obtenerItem<T>(clave: string): T | null {
@@ -18,7 +17,6 @@ function guardarItem<T>(clave: string, valor: T): void {
   localStorage.setItem(clave, JSON.stringify(valor));
 }
 
-
 export function obtenerCarrito(): ICartItem[] {
   return obtenerItem<ICartItem[]>(CLAVE_CARRITO) ?? [];
 }
@@ -26,7 +24,6 @@ export function obtenerCarrito(): ICartItem[] {
 function guardarCarrito(items: ICartItem[]): void {
   guardarItem<ICartItem[]>(CLAVE_CARRITO, items);
 }
-
 
 export function agregarAlCarrito(producto: IProducto, cantidad: number = 1): void {
   const items = obtenerCarrito();
@@ -55,12 +52,14 @@ export function actualizarCantidad(productoId: string, cantidad: number): void {
   guardarCarrito(items);
 }
 
-
 export function eliminarDelCarrito(productoId: string): void {
   const items = obtenerCarrito().filter((i) => i.producto.id !== productoId);
   guardarCarrito(items);
 }
 
+export function contarItems(): number {
+  return obtenerCarrito().reduce((total, item) => total + item.cantidad, 0);
+}
 
 export function calcularTotal(): number {
   return obtenerCarrito().reduce(

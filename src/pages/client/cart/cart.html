@@ -1,54 +1,91 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Carrito - Foodstore</title>
+    <title>Mi carrito - Food Store</title>
     <link rel="stylesheet" href="/src/styles/style.css">
 </head>
 
 <body data-role="client">
 
-    <header>
-        <h1>Mi Carrito</h1>
-        <p class="usuario-actual" id="usuario-actual"></p>
-        <nav>
-            <ul>
-                <li><a href="/src/pages/client/home/home.html">Volver al catálogo</a></li>
-                <li><a href="#" id="logout-link">Cerrar Sesión</a></li>
-            </ul>
-        </nav>
+    <header class="site-header">
+        <div class="header-inner">
+            <a class="brand" href="../home/home.html">🍔 Food<span>Store</span></a>
+
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="../home/home.html">Catálogo</a></li>
+                    <li>
+                        <a href="./cart.html" class="activo">
+                            🛒 Carrito
+                            <span class="badge" id="contador-carrito">0</span>
+                        </a>
+                    </li>
+                    <li><a href="#" id="logout-link">Cerrar sesión</a></li>
+                </ul>
+            </nav>
+
+            <p class="usuario-actual" id="usuario-actual"></p>
+        </div>
     </header>
 
-    <hr>
+    <div class="layout layout--simple">
+        <main>
+            <h2 class="titulo-seccion">Mi carrito</h2>
+            <div class="estado-vacio" id="carrito-vacio" hidden>
+                <span class="icono" aria-hidden="true">🛒</span>
+                <h3>Tu carrito está vacío</h3>
+                <p>Todavía no agregaste ningún producto a tu pedido.</p>
+                <a class="btn btn-primario" href="../home/home.html">Ir al catálogo</a>
+            </div>
+            <div class="panel" id="panel-carrito" hidden>
+                <div class="tabla-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Precio</th>
+                                <th>Cantidad</th>
+                                <th>Subtotal</th>
+                                <th><span class="visually-hidden">Quitar</span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="cuerpo-carrito"></tbody>
+                    </table>
+                </div>
+            </div>
+            <section class="resumen" id="resumen-carrito" hidden>
+                <div class="resumen-linea">
+                    <span id="resumen-items">0 productos</span>
+                    <span id="resumen-subtotal">$0,00</span>
+                </div>
+                <div class="resumen-linea resumen-total">
+                    <span class="etiqueta">Total de la compra</span>
+                    <span class="monto" id="total-carrito">$0,00</span>
+                </div>
 
-    <main>
-        <section>
-            <h2>Productos en tu carrito</h2>
-            <p id="carrito-vacio" class="mensaje-error" style="display: none;">
-                Tu carrito está vacío.
-            </p>
-            <table id="tabla-carrito" style="display: none;">
-                <thead>
-                    <tr>
-                        <th>Producto</th>
-                        <th>Precio</th>
-                        <th>Cantidad</th>
-                        <th>Subtotal</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody id="cuerpo-carrito"></tbody>
-            </table>
-            <h3 id="total-carrito"></h3>
-        </section>
-    </main>
+                <div class="acciones-carrito">
+                    <a class="btn btn-secundario" href="../home/home.html">Seguir comprando</a>
+                    <button type="button" class="btn-secundario" id="vaciar-carrito">Vaciar carrito</button>
+                </div>
+            </section>
+        </main>
+    </div>
 
-    <footer>
-        <p>&copy; 2026 Food Store. Todos los derechos reservados. Contacto: info@foodstore.com</p>
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <p class="footer-marca">🍔 Food Store</p>
+            <p>&copy; 2026 Food Store. Todos los derechos reservados.</p>
+            <p>Contacto: <a href="mailto:info@foodstore.com">info@foodstore.com</a></p>
+        </div>
     </footer>
+
+    <div class="contenedor-toast" id="contenedor-toast" aria-live="polite"></div>
 
     <script type="module" src="/src/main.ts"></script>
     <script type="module" src="./cart.ts"></script>
 </body>
+
 </html>

@@ -8,8 +8,8 @@ const inputPassword = document.getElementById("password") as HTMLInputElement;
 const mensajeError = document.getElementById("mensaje-error") as HTMLParagraphElement;
 
 const HOME_POR_ROL: Record<Rol, string> = {
-  [Rol.ADMIN]: "/src/pages/admin/admin.html",
-  [Rol.CLIENT]: "/src/pages/client/client.html",
+  [Rol.ADMIN]: "src/pages/admin/admin.html",
+  [Rol.CLIENT]: "src/pages/client/home/home.html",
 };
 
 formulario.addEventListener("submit", (evento: SubmitEvent) => {

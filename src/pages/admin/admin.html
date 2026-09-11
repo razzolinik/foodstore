@@ -6,25 +6,31 @@
     <title>Panel de Administración - Foodstore</title>
     <link rel="stylesheet" href="/src/styles/style.css">
 </head>
-<!-- data-role="admin": main.ts's guard requires a session with rol ADMIN -->
 <body data-role="admin">
 
-    <header>
-        <h1>Panel de Administración</h1>
-        <p class="usuario-actual" id="usuario-actual"></p>
-        <nav>
-            <ul>
-                <li><a href="/src/pages/client/client.html">Volver a la Tienda</a></li>
-                <li><a href="#" id="logout-link">Cerrar Sesión</a></li>
-            </ul>
-        </nav>
+    <header class="site-header">
+        <div class="header-inner">
+            <a class="brand" href="./admin.html">🍔 Food<span>Store</span></a>
+
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="./admin.html" class="activo">Administración</a></li>
+                    <li><a href="../client/home/home.html">Volver a la tienda</a></li>
+                    <li><a href="#" id="logout-link">Cerrar sesión</a></li>
+                </ul>
+            </nav>
+
+            <p class="usuario-actual" id="usuario-actual"></p>
+        </div>
     </header>
 
+    <div class="layout layout--simple">
     <main>
 
         <section>
-            <h2>Gestión de Productos</h2>
+            <h2 class="titulo-seccion">Gestión de productos</h2>
 
+            <div class="panel tabla-scroll">
             <table>
                 <thead>
                     <tr>
@@ -37,6 +43,7 @@
                 </thead>
                 <tbody id="tabla-productos"></tbody>
             </table>
+            </div>
         </section>
 
         <details open id="producto-editor">
@@ -64,15 +71,20 @@
                     <label for="descripcion-producto">Descripción:</label>
                     <textarea id="descripcion-producto" name="descripcion-producto" placeholder="Ingresa los ingredientes..."></textarea>
                 </div>
-                <button type="submit" id="guardar-producto">Guardar Producto</button>
-                <button type="button" id="cancelar-edicion" hidden>Cancelar</button>
+                <button type="submit" class="btn-primario" id="guardar-producto">Guardar producto</button>
+                <button type="button" class="btn-secundario" id="cancelar-edicion" hidden>Cancelar</button>
             </form>
         </details>
 
     </main>
+    </div>
 
-    <footer>
-        <p>Panel de Administración - Food Store v1.0</p>
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <p class="footer-marca">🍔 Food Store</p>
+            <p>Panel de administración &middot; v1.0</p>
+            <p>&copy; 2026 Food Store</p>
+        </div>
     </footer>
 
     <script type="module" src="/src/main.ts"></script>
