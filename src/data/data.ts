@@ -1,8 +1,12 @@
 import { IProducto } from "../types/IProduct";
-import { ICategoria } from "../types/categoria";
+import { ICategoria } from "../types/ICategoria";
 
 
-export const PRODUCTS: IProducto[] = [
+// Catálogo semilla: solo se usa una vez, para poblar localStorage
+// la primera vez que se abre la app (ver sembrarDatosIniciales en utils/storage.ts).
+// Ni el catálogo del cliente ni el panel de admin leen este array directamente:
+// ambos leen de localStorage a través de obtenerProductos().
+export const PRODUCTS_SEED: IProducto[] = [
   {
     id: "p1",
     nombre: "Hamburguesa Triple",
@@ -70,8 +74,8 @@ export const PRODUCTS: IProducto[] = [
 ];
 
 
-export function getCategories(): ICategoria[] {
-  const nombresUnicos = [...new Set(PRODUCTS.map((p) => p.categoria))];
+export function getCategories(productos: IProducto[]): ICategoria[] {
+  const nombresUnicos = [...new Set(productos.map((p) => p.categoria))];
   return nombresUnicos.map((nombre, index) => ({
     id: String(index + 1),
     nombre,

@@ -1,6 +1,6 @@
-import { PRODUCTS, getCategories } from "../../../data/data";
+import { getCategories } from "../../../data/data";
 import { agregarAlCarrito } from "../../../utils/cart";
-import { obtenerSesion } from "../../../utils/storage";
+import { obtenerSesion, obtenerProductos } from "../../../utils/storage";
 import { cerrarSesion } from "../../../utils/auth";
 import { mostrarToast, actualizarContadorCarrito, formatearPrecio } from "../../../utils/ui";
 import { IProducto } from "../../../types/IProduct";
@@ -18,6 +18,12 @@ const botonVerTodo = document.getElementById("ver-todo") as HTMLButtonElement;
 const usuarioActual = document.getElementById("usuario-actual") as HTMLParagraphElement;
 const logoutLink = document.getElementById("logout-link") as HTMLAnchorElement;
 
+// Fuente única de verdad: lo que haya en localStorage bajo "products".
+// Se lee una sola vez al cargar la página (igual que hacía antes con
+// el array estático PRODUCTS), pero ahora refleja lo que admin haya
+// agregado, editado o eliminado.
+const productos = obtenerProductos();
+
 let textoBusqueda = "";
 let categoriaSeleccionada: string | null = null;
 
@@ -34,7 +40,7 @@ const escapar = (texto: string): string =>
   });
 
 const cargarCategorias = (): void => {
-  const categorias = getCategories();
+  const categorias = getCategories(productos);
 
   listaCategorias.innerHTML = `
     <li><a href="#" data-categoria="">Todas las categorías</a></li>
@@ -69,7 +75,7 @@ const marcarCategoriaActiva = (): void => {
 const obtenerProductosFiltrados = (): IProducto[] => {
   const busqueda = textoBusqueda.trim().toLowerCase();
 
-  return PRODUCTS.filter((producto) => {
+  return productos.filter((producto) => {
     const coincideNombre = producto.nombre.toLowerCase().includes(busqueda);
     const coincideCategoria =
       categoriaSeleccionada === null || producto.categoria === categoriaSeleccionada;
