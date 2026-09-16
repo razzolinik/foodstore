@@ -2,6 +2,7 @@
 
 Trabajo Práctico — UTN FRM TUPAD
 Alumna: Khiara Razzolini
+Link al repositorio: https://github.com/razzolinik/foodstore 
 
 ## Descripción
 
